@@ -44,7 +44,7 @@ An object with S3 class 'regjmix' allowing for call to generic functions such as
 An object of class 'regjmix' is a list containing the following components:
 \item{mu}{matrix of the group-wise means of the predictor variables.}
 \item{Sigma}{list of the group-wise covariance matrices of the predictor variables.}
-\item{beta}{matrix of the group-wise intercepts and regression coefficients.}
+\item{coefficients}{matrix of the group-wise intercepts and regression coefficients.}
 \item{lambda}{the group-wise lasso penalties (when \code{method = 'lasso'}).}
 \item{sigma2}{the group-wise error variances.}
 \item{tau}{the group probabilities.}
