@@ -1,10 +1,10 @@
 #' Function rjm
-#' 
+#'
 #' Function for regularized joint mixture (RJM) modeling. For details see
 #' Perrakis, Lartigue, Dondenlinger and Mukherjee (2022).
 #' @author Konstanstinos Perrakis \email{konstantinos.perrakis@durham.ac.uk}
 #' @references Perrakis, K., Lartigue, T., Dondenlinger, F. and  Mukherjee, S. (2022) Regularized joint mixture models. \url{https://arxiv.org/pdf/1908.07869.pdf}
-#' @param y response vector. 
+#' @param y response vector.
 #' @param X predictor matrix (do not center or standardize).
 #' @param K number of groups (minimum and default is two).
 #' @param outer number of EM starts (default is 10).
@@ -12,19 +12,19 @@
 #' @param parallel option for running the EM's in parallel, with FALSE being the default. The number of clusters must be specified by the user before calling the \code{rjm} function.
 #' @param epsilon threshold for termination of the EM, based on the relative change criterion. Default is 1e-06.
 #' @param method sparse method for the regression component. Available options are 'nj' (default) for the normal-Jeffreys prior and 'lasso'.
-#' @param lasso.pen option to be specified when \code{method = 'lasso'} for tuning the penalty term. Available options are 'fixed' (default) which uses a two-step cross-validation procedure and 'random' which provides the MAP penalty estimate under a Pareto prior.   
+#' @param lasso.pen option to be specified when \code{method = 'lasso'} for tuning the penalty term. Available options are 'fixed' (default) which uses a two-step cross-validation procedure and 'random' which provides the MAP penalty estimate under a Pareto prior.
 #' @param constant multiplicative constant (>0) for the lasso penalty when \code{lasso.pen = 'random'}. Default option is min(2p/(3n),1), where p is the number of predictors and n is the sample size.
-#' @return An object with S3 class 'regjmix' allowing for call to generic functions such as \code{\link{coef}}.  
+#' @return An object with S3 class 'regjmix' allowing for call to generic functions such as \code{\link{coef}}.
 #' @return An object of class 'regjmix' is a list containing the following components:
 #' \item{mu}{matrix of the group-wise means of the predictor variables.}
 #' \item{Sigma}{list of the group-wise covariance matrices of the predictor variables.}
 #' \item{beta}{matrix of the group-wise intercepts and regression coefficients.}
 #' \item{lambda}{the group-wise lasso penalties (when \code{method = 'lasso'}).}
-#' \item{sigma2}{the group-wise error variances.}  
+#' \item{sigma2}{the group-wise error variances.}
 #' \item{tau}{the group probabilities.}
 #' \item{z}{the group allocations of the observations.}
 #' \item{model}{summary providing number of groups, the maximum log-likelihood value, number of non-zero parameters and values of AIC and BIC.}
-#' @export 
+#' @export
 
 rjm <-
   function(y,
@@ -96,16 +96,16 @@ rjm <-
     tX <- t(X)
     X1 <- cbind(1, X)
     tX1 <- t(X1)
-    
+
     '%do.choose%' <- ifelse(parallel, `%dopar%`, `%do%`)
-    
+
     if (method == 'nj') {
       EM <-
         foreach(1:outer,
                 .packages = c("glassoFast", "Matrix"),
                 .combine = rbind) %do.choose% {
                   # initilization
-                  
+
                   eff.seed <- sample(1:10 ^ 5, 1)
                   for (k in 1:K) {
                     set.seed(eff.seed)
@@ -131,7 +131,7 @@ rjm <-
                     sigma[k] <-
                       c((t(term2) %*% M[[k]] %*% term2) / (tau[k] * n + 2) + runif(1, 0.1, 1))
                   }
-                  
+
                   T <- lapply(M, diag)
                   n.k <- sapply(T, sum)
                   M <- sapply(1:K, function(z)
@@ -151,11 +151,11 @@ rjm <-
                   tX.k <- lapply(X.k, t)
                   non.zero.beta <- lapply(1:K, function(z)
                     beta[[z]][ind[[z]]])
-                  
-                  
+
+
                   for (j in 1:inner) {
                     ### M-step ###
-                    
+
                     tau <- sapply(T, mean)
                     mu <- sapply(1:K, function(z)
                       apply(T[[z]] * X, 2, sum) / n.k[z])
@@ -165,9 +165,9 @@ rjm <-
                     Smat <-
                       lapply(1:K, function(z)
                         t(Mat[[z]]) %*% M[[z]] %*% Mat[[z]] / n.k[z])
-                    
+
                     xi <- psi / (tau * n)
-                    
+
                     gL <- lapply(1:K, function(z)
                       glassoFast(as.matrix(Smat[[z]]), rho = xi[z]))
                     Sigma <- lapply(1:K, function(z)
@@ -179,7 +179,7 @@ rjm <-
                         Re(sum(log(
                           eigen(Sigma[[z]], only.values = TRUE)$values
                         ))))
-                    
+
                     res <-
                       lapply(1:K, function(z)
                         y - alpha[z] - as.matrix(X.k[[z]]) %*% beta[[z]][ind[[z]]])
@@ -189,16 +189,16 @@ rjm <-
                     alpha <-
                       sapply(1:K, function(z)
                         (t(y - as.matrix(X.k[[z]]) %*% beta[[z]][ind[[z]]]) %*% T[[z]])/ n.k[z])
-                    
+
                     XU.k <- lapply(1:K, function(z)
                       as.matrix(X.k[[z]] %*% U[[z]]))
                     C.k <- lapply(1:K, function(z) (sigma[z] * Diagonal(x = 1 / T[[z]]) + XU.k[[z]] %*% tX.k[[z]]))
                     check.k <- unlist(lapply(1:K, function(z) sum(C.k[[z]][C.k[[z]]==Inf])))
-                    if(any(check.k == Inf)) { 
+                    if(any(check.k == Inf)) {
                       status <- TRUE
                       break }
                     check.k <- sapply(1:K, function(z) class(try(solve(C.k[[z]], tol = .Machine$double.eps^10), silent = TRUE)) == class(C.k[[z]]))
-                    if(any(check.k == FALSE)) { 
+                    if(any(check.k == FALSE)) {
                       status <- TRUE
                       break }
                     G.k <-
@@ -217,9 +217,9 @@ rjm <-
                         beta[[k]] <- rep(0, p)
                       }
                     }
-                    
+
                     ### E-step ###
-                    
+
                     for (i in 1:n) {
                       res <- sapply(1:K, function(z)
                         as.matrix(X[i,] - mu[, z]))
@@ -227,7 +227,7 @@ rjm <-
                         sapply(1:K, function(z)
                           as.matrix(t(res[, z]) %*% invSigma[[z]]) %*% res[, z])
                     }
-                    
+
                     res <-
                       sapply(1:K, function(z)
                         y - alpha[z] - as.matrix(X.k[[z]] %*% non.zero.beta[[z]]))
@@ -236,7 +236,7 @@ rjm <-
                         as.matrix(t(res[, z]) %*% M[[z]]) %*% res[, z] / sigma[z] + as.matrix(t(as.matrix(
                           non.zero.beta[[z]]
                         )) %*% V[[z]] %*% as.matrix(non.zero.beta[[z]])))
-                    
+
                     Q.k <-
                       sapply(1:K, function(z)
                         sum(T[[z]] * (
@@ -251,11 +251,11 @@ rjm <-
                         break
                       }
                     }
-                    
+
                     y.ker1 <-
                       sapply(1:K, function(z)
                         as.matrix(t(res[, z]) %*% M[[z]]) %*% res[, z] / sigma[z])
-                    
+
                     L.k <-
                       sapply(1:K, function(z)
                         sum(T[[z]] * (
@@ -263,7 +263,7 @@ rjm <-
                         ))  -
                           n.k[z] * 0.5 * log(sigma[z]) - 0.5 * y.ker1[z])
                     logLik <- sum(L.k)
-                    
+
                     if(K > 1){
                       for (k in 1:K) {
                         T[[k]] <- rep(NA, n)
@@ -293,12 +293,12 @@ rjm <-
                       }
                     }
                     n.k <- sapply(T, sum)
-                    
+
                     status <- min(n.k) < c(n / (10 * K))
                     if (status == TRUE) {
                       break
                     }
-                    
+
                     M <- sapply(1:K, function(z)
                       Diagonal(x = T[[z]]))
                     ratio <- lapply(beta, function(z)
@@ -327,7 +327,7 @@ rjm <-
           .combine = rbind
         ) %do.choose% {
           # initilization
-          
+
           eff.seed <- sample(1:10 ^ 5, 1)
           for (k in 1:K) {
             set.seed(eff.seed)
@@ -356,7 +356,7 @@ rjm <-
             chi[k] <- alpha[k] * rho[k]
             phi[[k]] <- beta[[k]] * rho[k]
           }
-          
+
           T <- lapply(M, diag)
           n.k <- sapply(T, sum)
           M <- sapply(1:K, function(z)
@@ -365,10 +365,10 @@ rjm <-
           z.status <- matrix(nrow = n, ncol = inner)
           assign.status <- FALSE
           count <- 0
-          
+
           for (j in 1:inner) {
             ### M-step ###
-            
+
             tau <- sapply(T, mean)
             mu <- sapply(1:K, function(z)
               apply(T[[z]] * X, 2, sum) / n.k[z])
@@ -378,9 +378,9 @@ rjm <-
             Smat <-
               lapply(1:K, function(z)
                 t(Mat[[z]]) %*% M[[z]] %*% Mat[[z]] / n.k[z])
-            
+
             xi <- psi / (tau * n)
-            
+
             gL <- lapply(1:K, function(z)
               glassoFast(as.matrix(Smat[[z]]), rho = xi[z]))
             Sigma <- lapply(1:K, function(z)
@@ -392,12 +392,12 @@ rjm <-
                 Re(sum(log(
                   eigen(Sigma[[z]], only.values = TRUE)$values
                 ))))
-            
+
             eff.sample <-
               lapply(1:K, function(z)
                 which(T[[z]] != 0))
             eff.n <- sapply(eff.sample, length)
-            
+
             scale.M <-
               lapply(1:K, function(z)
                 sqrt(M[[z]][eff.sample[[z]], eff.sample[[z]]])/2)
@@ -407,7 +407,7 @@ rjm <-
             XX <-
               sapply(1:K, function(z)
                 scale.M[[z]] %*% X[eff.sample[[z]],])
-            
+
             if (lasso.pen == 'fixed') {
               if (j == 1 | (assign.status == TRUE & count == 1)) {
                 lambda <- sapply(1:K, function(z)
@@ -424,16 +424,16 @@ rjm <-
               lambda <-
                 sapply(1:K, function(z)
                   constant / sum(abs(phi[[z]])) * sqrt2 * sqrt(K*log(p) / n))
-              lambda[lambda==Inf] <- n	
+              lambda[lambda==Inf] <- n
             }
-            
+
             y.eff <-
               lapply(1:K, function(z)
                 y[eff.sample[[z]]])
             X.eff <-
               lapply(1:K, function(z)
                 X[eff.sample[[z]],])
-            
+
             inner.product.y <- sapply(1:K, function(z)
               t(y.eff[[z]]) %*% M[[z]][eff.sample[[z]],eff.sample[[z]]] %*% y.eff[[z]])
             inner.product.yX <-
@@ -450,16 +450,16 @@ rjm <-
                     inner.product.yX[z]
                 ) / (2 * inner.product.y[z]))
             sigma <- 1 / rho ^ 2
-            
+
             chi <-
               sapply(1:K, function(z)
                 (t(rho[z] * y - X %*% phi[[z]]) %*% T[[z]]) / n.k[z])
             alpha <- chi / rho
-            
+
             yy <-
               sapply(1:K, function(z)
                 scale.M[[z]] %*% y[eff.sample[[z]]] * rho[z] - diag(scale.M[[z]]) * chi[z])
-            
+
             phi <-
               lapply(1:K, function(z)
                 glmnet(
@@ -470,24 +470,24 @@ rjm <-
                   standardize = TRUE,
                   intercept = FALSE
                 )$beta)
-            
+
             phi <- lapply(phi, as.numeric)
             phi <- lapply(1:K, function(z)
               phi[[z]] / eff.n[z])
-            
+
             beta <- lapply(1:K, function(z)
               phi[[z]] / rho[z])
             beta <- lapply(beta, as.numeric)
-            
+
             ind <- lapply(1:K, function(z)
               which(phi[[z]] != 0))
             non.zero.phi <- lapply(1:K, function(z)
               phi[[z]][ind[[z]]])
             X.k <- lapply(1:K, function(z)
               as.matrix(XX[[z]][, ind[[z]]]))
-            
+
             ### E-step ###
-            
+
             for (i in 1:n) {
               res <- sapply(1:K, function(z)
                 as.matrix(X[i,] - mu[, z]))
@@ -495,14 +495,14 @@ rjm <-
                 sapply(1:K, function(z)
                   as.matrix(t(res[, z]) %*% invSigma[[z]]) %*% res[, z])
             }
-            
+
             res <-
               sapply(1:K, function(z)
                 yy[[z]] - as.matrix(X.k[[z]] %*% non.zero.phi[[z]]))
             y.ker <-
               sapply(1:K, function(z)
                 as.matrix(t(res[[z]]) %*% res[[z]]) + lambda[z] * sum(abs(non.zero.phi[[z]])))
-            
+
             if (lasso.pen == 'fixed') {
               Q.k <-
                 sapply(1:K, function(z)
@@ -513,7 +513,7 @@ rjm <-
                     (n.k[z] + p + 2) * log(rho[z]) -
                     y.ker[z] / 2)
             }
-            
+
             if (lasso.pen == 'random') {
               Q.k <-
                 sapply(1:K, function(z)
@@ -524,7 +524,7 @@ rjm <-
                     (n.k[z] + p + 2) * log(rho[z]) -
                     y.ker[z] /2 + constant * sqrt2 * sqrt(K*log(p) / n) * log(lambda[z]))
             }
-            
+
             Q.cur <- sum(Q.k)
             Q[j] <- Q.cur
             if (j > 1) {
@@ -532,11 +532,11 @@ rjm <-
                 break
               }
             }
-            
+
             y.ker1 <-
               sapply(1:K, function(z)
                 as.matrix(t(res[[z]]) %*% res[[z]]))
-            
+
             L.k <-
               sapply(1:K, function(z)
                 sum(T[[z]] * (
@@ -544,7 +544,7 @@ rjm <-
                 ))  -
                   n.k[z] * 0.5 * log(rho[z]) - 0.5 * y.ker1[z])
             logLik <- sum(L.k)
-            
+
             if(K > 1){
               for (k in 1:K) {
                 T[[k]] <- rep(NA, n)
@@ -580,19 +580,19 @@ rjm <-
                 count <- count + 1
             }
             n.k <- sapply(T, sum)
-            
+
             status <- min(n.k) < c(n / (10 * K))
             if (status == TRUE) {
               break
             }
-            
+
             M <- sapply(1:K, function(z)
               Diagonal(x = T[[z]]))
           }
           list(Q, tau, beta, sigma, mu, Sigma, T, status, lambda, alpha, logLik)
         }
     }
-    
+
     Q <- matrix(unlist(EM[, 1]), outer, inner, byrow = TRUE)
     status <- unlist(EM[, 8], use.names = FALSE)
     if (sum(status) != outer) {
@@ -657,7 +657,7 @@ rjm <-
         list(
           mu = matrix(unlist(lapply(EM[max.Q, 5], c)), p, K),
           Sigma = Sigmas,
-          beta = betas,
+          coefficients = betas,
           lambda = lambdas,
           sigma2 = unlist(EM[max.Q, 4], use.names = FALSE),
           tau = unlist(EM[max.Q, 2], use.names = FALSE),
