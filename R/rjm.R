@@ -102,7 +102,7 @@ rjm <-
     if (method == 'nj') {
       EM <-
         foreach(1:outer,
-                #.packages = c("glassoFast", "Matrix"),
+                .packages = c("glassoFast", "Matrix"),
                 .combine = rbind) %do.choose% {
                   # initilization
                   
@@ -323,7 +323,7 @@ rjm <-
       EM <-
         foreach(
           1:outer,
-          #.packages = c("glassoFast", "Matrix", "glmnet"),
+          .packages = c("glassoFast", "Matrix", "glmnet"),
           .combine = rbind
         ) %do.choose% {
           # initilization
