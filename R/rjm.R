@@ -18,9 +18,9 @@
 #' @return An object of class 'regjmix' is a list containing the following components:
 #' \item{mu}{matrix of the group-wise means of the predictor variables.}
 #' \item{Sigma}{list of the group-wise covariance matrices of the predictor variables.}
-#' \item{beta}{matrix of the group-wise intercepts and regression coefficients.}
+#' \item{coefficients}{matrix of the group-wise intercepts and regression coefficients.}
 #' \item{lambda}{the group-wise lasso penalties (when \code{method = 'lasso'}).}
-#' \item{sigma2}{the group-wise error variances.}
+#' \item{sigma}{the group-wise error variances.}
 #' \item{tau}{the group probabilities.}
 #' \item{z}{the group allocations of the observations.}
 #' \item{model}{summary providing number of groups, the maximum log-likelihood value, number of non-zero parameters and values of AIC and BIC.}
@@ -659,7 +659,7 @@ rjm <-
           Sigma = Sigmas,
           coefficients = betas,
           lambda = lambdas,
-          sigma2 = unlist(EM[max.Q, 4], use.names = FALSE),
+          sigma = unlist(EM[max.Q, 4], use.names = FALSE),
           tau = unlist(EM[max.Q, 2], use.names = FALSE),
           z = z,
           model = model.details
