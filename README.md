@@ -13,7 +13,7 @@ install_github('k-perrakis/regjmix')
 library(regjmix)
 ```
 
-## Simulated example
+## Synthetic example
 
 A simple simulation with two latent groups, total sample size equal to 100 and 10 potential predictors where only the first predictor has an effect on the response, with different regression coefficients in the
 two groups.
@@ -73,3 +73,6 @@ For additional details:
 ``` r
 ?rjm 
 ```
+
+## Reference
+Perrakis, K., Lartigue, T., Dondelinger, F. and Mukherjee, S. (2022). Regularized joint mixtures, [https://arxiv.org/pdf/1908.07869.pdf].
