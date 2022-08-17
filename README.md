@@ -34,43 +34,29 @@ The function for fitting RJM models is *rjm*. Below we fit a model using lasso g
 ``` r
 rjm.lasso = rjm(y, X, method = 'lasso', outer = 5)
 rjm.lasso$model
-```
-
-    ##  Clusters logLikelihood No.Parameters       AIC       BIC
-    ##         2     -641.4234            85 -1452.847 -1674.286
-
-``` r
-coef(rjm.lasso) 
-# alternatively use rjm.lasso$coefficients
-```
-
-    ## 11 x 2 sparse Matrix of class "dgCMatrix"
-    ##                                     
-    ## Intercept -0.0108038722 0.0004473664
-    ## b1        -1.0005646347 0.9696923453
-    ## b2         .            .           
-    ## b3         .            .           
-    ## b4         .            .           
-    ## b5         .            .           
-    ## b6         .            .           
-    ## b7         .            .           
-    ## b8         .            .           
-    ## b9        -0.0008425582 .           
-    ## b10        .            .
-
-``` r
+##  Clusters logLikelihood No.Parameters       AIC       BIC
+##         2     -641.4234            85 -1452.847 -1674.286
+coef(rjm.lasso)  # alternatively use rjm.lasso$coefficients
+## 11 x 2 sparse Matrix of class "dgCMatrix"
+##                                     
+## Intercept -0.0108038722 0.0004473664
+## b1        -1.0005646347 0.9696923453
+## b2         .            .           
+## b3         .            .           
+## b4         .            .           
+## b5         .            .           
+## b6         .            .           
+## b7         .            .           
+## b8         .            .           
+## b9        -0.0008425582 .           
+## b10        .            .
 rjm.lasso$z
-```
-
-    ##   [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 2 2 2 2 2 2 2 1 2 2 2 1 2 2 2 2 2
-    ##  [44] 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1
-    ##  [87] 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-
-``` r
+##   [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 2 2 2 2 2 2 2 1 2 2 2 1 2 2 2 2 2
+##  [44] 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1
+##  [87] 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 adjustedRandIndex(z.latent, rjm.lasso$z)
+## [1] 0.808062
 ```
-
-    ## [1] 0.808062
 
 The EM can also be run in parallel as follows.
 
