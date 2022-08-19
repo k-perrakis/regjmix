@@ -73,4 +73,4 @@ For additional details:
 ```
 
 ## Reference
-Perrakis, K., Lartigue, T., Dondelinger, F. and Mukherjee, S. (2022). Regularized joint mixtures, [https://arxiv.org/pdf/1908.07869.pdf].
+Perrakis, K., Lartigue, T., Dondelinger, F. and Mukherjee, S. (2022). Regularized joint mixture models, [https://arxiv.org/pdf/1908.07869.pdf].
