@@ -256,9 +256,9 @@ for (j in 1:p) {
   modelRL3 = rjm(XX[,j],XX[,-j],K=3,method='lasso',lasso.pen='random',parallel=TRUE)
   modelRL4 = rjm(XX[,j],XX[,-j],K=4,method='lasso',lasso.pen='random',parallel=TRUE)
 
-  model[j,5] = which.max(c(modelNJ2$BIC,modelNJ3$BIC,modelNJ4$BIC))+1
-  model[j,6] = which.max(c(modelFL2$BIC,modelFL3$BIC,modelFL4$BIC))+1
-  model[j,7] = which.max(c(modelRL2$BIC,modelRL3$BIC,modelRL4$BIC))+1
+  model[j,3] = which.max(c(modelNJ2$model[5],modelNJ3$model[5],modelNJ4$model[5]))+1
+  model[j,4] = which.max(c(modelFL2$model[5],modelFL3$model[5],modelFL4$model[5]))+1
+  model[j,5] = which.max(c(modelRL2$model[5],modelRL3$model[5],modelRL4$model[5]))+1
 
 }
 stopCluster(cl)
