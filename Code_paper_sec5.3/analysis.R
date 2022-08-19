@@ -25,7 +25,7 @@ dim(genes)
 # 1st column has the true cancer type labels:
 # 1 = BRCA, 2 = KIRC, 3 = LUAD, 4 = THCA
 z = genes[,1]
-table(z)
+n.samples = table(z)
 # 2nd column has the response (gene NAPSA) for Application 1 (NAPSA ~ X).
 y = genes[,2]
 # The rest of the columns are use as features X for Application 1 (NAPSA ~ X).
@@ -266,7 +266,6 @@ apply(model, 2, table)
 
 ############################### PLOTS ###################################
 
-
 pdf('cancer_types.pdf',width = 9, height=4)
 layout(matrix(c(1,2,3,1,4,5),2,3,byrow = TRUE))
 plot(z,y, ylab='Response gene (NAPSA 9476)',xlab='',xaxt='n', bty='l', cex.lab = 1.4,
@@ -287,7 +286,7 @@ dev.off()
 
 MAX = max(abs(betasNJ),abs(betasFL),abs(betasRL))
 pdf('coef.pdf',width = 8, height=4)
-par(mfrow=c(1,4))
+par(mfrow=c(1,3))
 plot(1:(K*(p-1)),betasNJ, col = c(rep('green3', sum(betasNJ!=0)),rep('tomato1', sum(betasNJ==0))),
      pch = 19, ylim = c(0,MAX),bty='l',ylab='Absolute regression coefficients',xlab='',cex.lab=1.4,main='RJM-NJ',cex.main=1.4)
 plot(1:(K*(p-1)),betasFL, col = c(rep('green3', sum(betasFL!=0)),rep('tomato1', sum(betasFL==0))),
