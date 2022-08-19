@@ -1,9 +1,9 @@
 #' Function rjm
 #'
 #' Function for regularized joint mixture (RJM) modeling. For details see
-#' Perrakis, Lartigue, Dondenlinger and Mukherjee (2022).
+#' Perrakis, Lartigue, Dondelinger and Mukherjee (2022).
 #' @author Konstanstinos Perrakis \email{konstantinos.perrakis@durham.ac.uk}
-#' @references Perrakis, K., Lartigue, T., Dondenlinger, F. and  Mukherjee, S. (2022) Regularized joint mixture models. \url{https://arxiv.org/pdf/1908.07869.pdf}
+#' @references Perrakis, K., Lartigue, T., Dondelinger, F. and  Mukherjee, S. (2022) Regularized joint mixture models. \url{https://arxiv.org/pdf/1908.07869.pdf}
 #' @param y response vector.
 #' @param X predictor matrix (do not center or standardize).
 #' @param K number of groups (minimum and default is two).
