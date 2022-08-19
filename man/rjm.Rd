@@ -56,7 +56,7 @@ Function for regularized joint mixture (RJM) modeling. For details see
 Perrakis, Lartigue, Dondenlinger and Mukherjee (2022).
 }
 \references{
-Perrakis, K., Lartigue, T., Dondenlinger, F. and  Mukherjee, S. (2022) Regularized joint mixture models. \url{https://arxiv.org/pdf/1908.07869.pdf}
+Perrakis, K., Lartigue, T., Dondelinger, F. and  Mukherjee, S. (2022) Regularized joint mixture models. \url{https://arxiv.org/pdf/1908.07869.pdf}
 }
 \author{
 Konstanstinos Perrakis \email{konstantinos.perrakis@durham.ac.uk}
