@@ -219,6 +219,8 @@ RAND
 
 # This will take a long time to run (about a day)
 
+set.seed(1)
+XX = XX[sample(1:nrow(XX), 200), ]
 model = matrix(NA,p,5)
 colnames(model) = c('mclust','flexmix','NJbic','FLbic','RLbic')
 n.cluster = detectCores()
